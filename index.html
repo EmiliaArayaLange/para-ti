@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestra Aventura</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            font-family: 'Quicksand', sans-serif;
+            color: #4a4a4a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Corazones flotantes de fondo */
+        .heart {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.4);
+            font-size: 20px;
+            animation: floatup 5s linear infinite;
+            z-index: 0;
+        }
+        @keyframes floatup {
+            0% { transform: translateY(100vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        #game-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #d16b8a;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        p.story-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            transition: opacity 0.5s ease;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            background-color: #f7a8b8;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: #d16b8a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Animación de error */
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Corazones de fondo -->
+    <script>
+        for(let i=0; i<15; i++){
+            let heart = document.createElement("div");
+            heart.innerHTML = "❤";
+            heart.className = "heart";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+            heart.style.animationDelay = Math.random() * 2 + "s";
+            document.body.appendChild(heart);
+        }
+    </script>
+
+    <div id="game-container">
+        <h1 id="title">Nuestra Aventura</h1>
+        <p id="story-text" class="story-text">
+            Todo empezó por un match. Cuando tu carita salió en mi pantalla, sentí algo que nunca había sentido. Me puse súper nerviosa y dudé un segundo...
+        </p>
+        <div id="btn-container" class="btn-container">
+            <button onclick="checkAnswer(1, true)">¿Le hablo o no le hablo?</button>
+            <button onclick="checkAnswer(1, false)">Esperé a que ella me hablara.</button>
+        </div>
+    </div>
+
+    <script>
+        const storyParts = [
+            {
+                text: "Esa noche nos quedamos conversando por Instagram. Tú estabas viendo una película de terror, 'It', y se nos fue la hora. ¿Hasta qué hora hablamos?",
+                options: [
+                    { text: "Como hasta la medianoche.", correct: false },
+                    { text: "Hasta como las 3 de la mañana.", correct: true }
+                ]
+            },
+            {
+                text: "Y al otro día, al despertar, lo primero que vi fue tu 'buenos días'. Fue hermoso. Luego vino nuestro primer beso... ¿Cómo se sintió mi pancita?",
+                options: [
+                    { text: "Se apretó y mi corazón se aceleró a mil.", correct: true },
+                    { text: "Súper relajada, sin nervios.", correct: false }
+                ]
+            },
+            {
+                text: "A medida que salíamos, le agarré el gusto a caminar porque iba contigo. Recuerdo nuestras idas a los patos y esas tardes sentadas en el pasto comiendo... ¿Qué comíamos?",
+                options: [
+                    { text: "Helado de chocolate.", correct: false },
+                    { text: "Las papitas de la Assuan (¡tú me pegaste el gusto!).", correct: true }
+                ]
+            },
+            {
+                text: "Me encanta que hayas aparecido en mi vida. Me enamoré de tu risa, de tus caras locas y de un detalle súper tierno que haces cuando estás muy concentrada...",
+                options: [
+                    { text: "Sacas un poco la lengüita.", correct: true },
+                    { text: "Te muerdes el labio.", correct: false }
+                ]
+            }
+        ];
+
+        let currentLevel = 0;
+
+        function checkAnswer(levelIndex, isCorrect) {
+            const container = document.getElementById("game-container");
+            
+            if (!isCorrect) {
+                container.classList.add("shake");
+                setTimeout(() => container.classList.remove("shake"), 500);
+                return;
+            }
+
+            if (currentLevel < storyParts.length) {
+                const nextPart = storyParts[currentLevel];
+                
+                document.getElementById("story-text").style.opacity = 0;
+                
+                setTimeout(() => {
+                    document.getElementById("story-text").innerText = nextPart.text;
+                    
+                    const btnContainer = document.getElementById("btn-container");
+                    btnContainer.innerHTML = "";
+                    
+                    nextPart.options.forEach(opt => {
+                        const btn = document.createElement("button");
+                        btn.innerText = opt.text;
+                        btn.onclick = () => checkAnswer(currentLevel, opt.correct);
+                        btnContainer.appendChild(btn);
+                    });
+                    
+                    document.getElementById("story-text").style.opacity = 1;
+                    currentLevel++;
+                }, 500);
+
+            } else {
+                // Final del juego
+                document.getElementById("story-text").style.opacity = 0;
+                setTimeout(() => {
+                    document.getElementById("title").innerText = "Te amo, mi negrita hermosa";
+                    document.getElementById("story-text").innerHTML = "Contigo descubrí emociones y sentimientos que no había conocido.<br><br>Eres la luz de mis ojos, eres mi lucerito. ✨💖";
+                    document.getElementById("btn-container").innerHTML = "";
+                    document.getElementById("story-text").style.opacity = 1;
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
